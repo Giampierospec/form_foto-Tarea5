@@ -90,6 +90,7 @@ function loadInfo(){
 function nuovo(){
   enableFields();
   limpiarCampos();
+  ed_button.disabled = true;
 
 }
 function limpiarCampos(){
@@ -225,6 +226,7 @@ function svDataedit(btn){
     nv_button.disabled = false;
     sv_button.disabled = false;
     btn.style.display = "none";
+    btn.disabled = true;
     for(var i =0; i < dataPersona.length;i++){
       if( i == indx){
         dataPersona[i] = personas;
@@ -321,7 +323,7 @@ return_btn.addEventListener('click',function(ev){
   enableFields();
 
   si_rdbtn.disabled = true;
-  if(!ed_button.disabled){
+  if(!ed_button.disabled || ed_button.style.display=="none"){
     sv_button.disabled = false;
   }
 
