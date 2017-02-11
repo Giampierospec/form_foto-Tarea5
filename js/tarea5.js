@@ -156,6 +156,7 @@ function output(){
     ed_btn.setAttribute("class", "btn btn-primary");
     ed_btn.setAttribute("type", "button");
     ed_btn.innerHTML = "editar";
+    ed_btn.setAttribute("onclick","actualizarPersona(this)");
     cell.appendChild(ed_btn);
 
     cell = row.insertCell(-1);
@@ -170,6 +171,77 @@ function output(){
 
   }
   index = i;
+
+}
+function actualizarPersona(btn){
+  tr = btn.parentNode.parentNode;
+
+  canvas = document.getElementById('canvas');
+
+  if(confirm("Seguro que deseas editar la fila?")){
+    tr.setAttribute("class","warning");
+    var len = tb_persona.getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+    for(var i = 0; i < len; i++){
+      var ed_btn_pers = document.getElementById("ed_btn_pers"+i);
+      var dlt_btn_pers = document.getElementById("dlt_btn_pers"+i);
+      ed_btn_pers.disabled = true;
+      dlt_btn_pers.disabled = true;
+    }
+    ed_button.style.display = "inline-block";
+    sv_button.disabled = true;
+    nv_button.disabled = true;
+    indx = tr.getAttribute("index");
+    ced_persona.value = dataPersona[indx].cedula;
+    nom_persona.value = dataPersona[indx].nombre;
+    ap_persona.value = dataPersona[indx].apellido;
+    tel_persona.value = dataPersona[indx].tel;
+    var img = document.getElementById("img_persona"+indx);
+    src = img.src;
+
+    ed_button.setAttribute("onclick","svDataedit(this)");
+
+    enableFields();
+
+  }
+
+
+}
+function svDataedit(btn){
+  var ced = ced_persona.value;
+  var nom = nom_persona.value;
+  var ap = ap_persona.value;
+  var tel = tel_persona.value;
+  var ph = src;
+
+  var len = tb_persona.getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+  for(var i = 0; i < len; i++){
+    var ed_btn_pers = document.getElementById("ed_btn_pers"+i);
+    var dlt_btn_pers = document.getElementById("dlt_btn_pers"+i);
+    ed_btn_pers.disabled = false;
+    dlt_btn_pers.disabled = false;
+  }
+  if(ced != '' && nom != '' && ap != '' && tel !='' &&ph != null){
+    personas = new persona(ced,nom,ap,tel,ph);
+    nv_button.disabled = false;
+    sv_button.disabled = false;
+    btn.style.display = "none";
+    for(var i =0; i < dataPersona.length;i++){
+      if( i == indx){
+        dataPersona[i] = personas;
+      }
+    }
+    save();
+    disableFields();
+    limpiarCampos();
+    location.reload();
+  }
+  else{
+    alert("Hay campos vacios intente denuevo");
+  }
+
+
+
+
 
 }
 function popupImage(img){
@@ -204,8 +276,11 @@ function tomarFoto(){
   photo_button = document.getElementById('photo_button');
   return_btn = document.getElementById('return_btn');
   return_btn.disabled = true;
-  sv_button.disabled = true;
+  if(!sv_button.disabled){
+    sv_button.disabled = true;
+  }
 
+  ed_button.disabled = true;
   navigator.mediaDevices.getUserMedia({video:true, audio:false})
     .then(function(stream){
     video.srcObject = stream;
@@ -219,6 +294,7 @@ function tomarFoto(){
       enableFields();
       si_rdbtn.disabled = true;
       sv_button.disabled = false;
+      ed_button.disabled = false;
     });
 
 
@@ -245,7 +321,11 @@ return_btn.addEventListener('click',function(ev){
   enableFields();
 
   si_rdbtn.disabled = true;
-  sv_button.disabled = false;
+  if(!ed_button.disabled){
+    sv_button.disabled = false;
+  }
+
+  ed_button.disabled = false;
 
 },false);
 clearPhoto();
@@ -256,7 +336,6 @@ clearPhoto();
    context.fillRect(0,0,canvas.width, canvas.height);
 
    var data = canvas.toDataURL('image/png');
-   console.log(data);
    src = data;
    photo.setAttribute('src',data);
  }
