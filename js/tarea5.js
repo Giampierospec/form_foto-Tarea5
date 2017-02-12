@@ -259,7 +259,7 @@ function popupImage(img){
 
   modal.style.display = "block";
   modalImg.src = img.src;
-  captionText.innerHTML = img.alt;
+  captionText.innerHTML = "<p>"+img.getAttribute("alt")+"</p>";
 
   var span = document.getElementsByClassName("close")[0];
 
